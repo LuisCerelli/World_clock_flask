@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reloj Mundial</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #f0f0f0;
+            font-family: sans-serif;
+            text-align: center;
+            padding-top: 40px;
+        }
+        .clock {
+            font-size: 1.8em;
+            margin: 20px;
+        }
+        .flag {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Reloj Mundial (Tiempo Real)</h1>
+    <div id="clocks"></div>
+
+    <script>
+        const flags = {
+            "Argentina": "🇦🇷",
+            "Europa Central": "🇪🇺",
+            "Hamilton Island": "🇦🇺"
+        };
+
+        function isDay(hour) {
+            return hour >= 6 && hour < 18;
+        }
+
+        async function updateClocks() {
+            const res = await fetch("/api/time");
+            const data = await res.json();
+
+            let html = "";
+            for (const [name, time] of Object.entries(data)) {
+                const hour = parseInt(time.split(":")[0]);
+                const icon = isDay(hour) ? "🌞" : "🌙";
+                html += `<div class="clock"><span class="flag">${flags[name]}</span>${name}: ${time} ${icon}</div>`;
+            }
+            document.getElementById("clocks").innerHTML = html;
+        }
+
+        updateClocks();
+        setInterval(updateClocks, 1000);
+    </script>
+</body>
+</html>
